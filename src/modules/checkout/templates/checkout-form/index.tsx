@@ -5,6 +5,7 @@ import Addresses from "@modules/checkout/components/addresses"
 import Payment from "@modules/checkout/components/payment"
 import Review from "@modules/checkout/components/review"
 import Shipping from "@modules/checkout/components/shipping"
+import SubscriptionForm from "@modules/checkout/components/subscriptions"
 
 export default async function CheckoutForm({
   cart,
@@ -30,7 +31,9 @@ export default async function CheckoutForm({
         <div>
           <Addresses cart={cart} customer={customer} />
         </div>
-
+        <div>
+          <SubscriptionForm />
+        </div>
         <div>
           <Shipping cart={cart} availableShippingMethods={shippingMethods} />
         </div>

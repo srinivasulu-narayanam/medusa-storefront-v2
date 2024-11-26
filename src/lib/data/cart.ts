@@ -9,6 +9,7 @@ import { redirect } from "next/navigation"
 import { getAuthHeaders, getCartId, removeCartId, setCartId } from "./cookies"
 import { getProductsById } from "./products"
 import { getRegion } from "./regions"
+import { SubscriptionInterval } from "@modules/checkout/components/subscriptions"
 
 export async function retrieveCart() {
   const cartId = getCartId()
@@ -345,7 +346,7 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
   }
 
   redirect(
-    `/${formData.get("shipping_address.country_code")}/checkout?step=delivery`
+    `/${formData.get("shipping_address.country_code")}/checkout?step=subscription`
   )
 }
 
@@ -395,4 +396,23 @@ export async function updateRegion(countryCode: string, currentPath: string) {
   revalidateTag("products")
 
   redirect(`/${countryCode}${currentPath}`)
+}
+
+export async function updateSubscriptionData(
+  subscription_interval: SubscriptionInterval,
+  subscription_period: number
+) {
+  const cartId = getCartId()
+  
+  if (!cartId) {
+    throw new Error("No existing cart found when placing an order")
+  }
+
+  await updateCart({
+    metadata: {
+      subscription_interval,
+      subscription_period,
+    },
+  })
+  revalidateTag("cart")
 }
