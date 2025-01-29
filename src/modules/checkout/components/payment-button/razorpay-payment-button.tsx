@@ -1,9 +1,11 @@
+
+
 import { Button } from "@medusajs/ui"
 import Spinner from "@modules/common/icons/spinner"
-import React, { useCallback, useState } from "react"
-import  { useRazorpay, RazorpayOrderOptions } from "react-razorpay"
-import { placeOrder } from "@lib/data/cart"
+import React, { useCallback, useEffect, useState } from "react"
+import  {useRazorpay, RazorpayOrderOptions } from "react-razorpay"
 import { HttpTypes } from "@medusajs/types"
+import { placeOrder } from "@lib/data/cart"
 import { CurrencyCode } from "react-razorpay/dist/constants/currency"
 
 export const RazorpayPaymentButton = ({
@@ -11,74 +13,101 @@ export const RazorpayPaymentButton = ({
   notReady,
   cart
 }: {
-  session: any
+  session: HttpTypes.StorePaymentSession
   notReady: boolean
   cart: HttpTypes.StoreCart
 }) => {
   const [disabled, setDisabled] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+  const {Razorpay} = useRazorpay();
 
-  // Use useRazorpay hook to get the Razorpay constructor
-  const { Razorpay, error: razorpayError, isLoading } = useRazorpay(); 
+  // const [orderData,setOrderData] = useState({id:""})
 
   const orderData = session.data as Record<string, string>
-  
   const onPaymentCompleted = async () => {
     await placeOrder().catch(() => {
       setErrorMessage("An error occurred, please try again.")
       setSubmitting(false)
     })
   }
+  // useEffect(()=>{
+  //       setOrderData(session.data as {id:string})
+  //     },[session.data])
 
-  const handlePayment = useCallback(() => {
-    if (razorpayError) {
-      setErrorMessage(razorpayError);
-      return;
-    }
 
+  console.log({orderData})
+
+  const handlePayment = useCallback(async () => {
+    console.log("Click")
+    const onPaymentCancelled = async () => {
+            // await cancelOrder(session.provider_id).catch(() => {
+              setErrorMessage("PaymentCancelled")
+            //   setSubmitting(false)
+            // })
+          }
     const options: RazorpayOrderOptions = {
-      callback_url: `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/razorpay/hooks`,
+      // callback_url: `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/razorpay/hooks`,
+      callback_url: `https://shop.flinkk.io/razorpay/hooks`,
+
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY ?? '',
-      amount: Number(session.amount * 100),
+      amount: session.amount,
       order_id: orderData.id,
-      currency: cart?.region?.currency_code.toLocaleUpperCase() as CurrencyCode ?? "INR",
-      name: process.env.COMPANY_NAME ?? "CampEd",
+      currency: cart.currency_code.toUpperCase() as CurrencyCode,
+      name: process.env.COMPANY_NAME ?? "Flinkk",
       description: `Order number ${orderData.id}`,
+      remember_customer:true,
+
       image: "https://example.com/your_logo",
       modal: {
         backdropclose: true,
         escape: true,
         handleback: true,
         confirm_close: true,
-        ondismiss: () => {
+        ondismiss: async () => {
           setSubmitting(false)
+          setErrorMessage(`payment cancelled`)
+          await onPaymentCancelled()
         },
         animation: true,
       },
       handler: async (args) => {
         onPaymentCompleted()
       },
-      prefill: {
-        name: `${cart?.billing_address?.first_name} ${cart?.billing_address?.last_name}`,
-        email: cart?.email,
-        contact: cart?.shipping_address?.phone ?? undefined
+      "prefill": {
+        "name": cart?.billing_address?.first_name + " " + cart?.billing_address?.last_name,
+        "email": cart?.email,
+        "contact": (cart?.shipping_address?.phone) ?? undefined
       },
-      notes: `Address: ${cart?.billing_address}, Order Notes: ${session.data.notes}`,
+      "notes": session.data.notes as string,
+      
     };
 
-    const razorpayInstance = new Razorpay(options); // Create Razorpay instance from the constructor
-    razorpayInstance.open();
-    razorpayInstance.on("payment.failed", function (response: any) {
-      setErrorMessage(JSON.stringify(response.error))
-    })
-  }, [Razorpay, razorpayError]);
+    const razorpay = new Razorpay(options);
+    if(orderData.id)
+      console.log("yet to open")
+    razorpay.open();
+    console.log("===========> yet to complete open")
 
+    razorpay.on("payment.failed", function (response: any) {
+      setErrorMessage(JSON.stringify(response.error))
+   
+    })
+   razorpay.on("payment.authorized" as any, function (response: any) {
+    const authorizedCart = placeOrder().then(authorizedCart=>{
+    JSON.stringify(`authorized:`+ authorizedCart)
+    })
+    })
+    // razorpay.on("payment.captured", function (response: any) {
+
+    // }
+    // )
+  }, [Razorpay, cart.billing_address?.first_name, cart.billing_address?.last_name, cart.currency_code, cart?.email, cart?.shipping_address?.phone, orderData.id, session.amount, session.provider_id]);
   return (
     <>
       <Button
-        disabled={submitting || notReady || isLoading}  // Disable button if Razorpay is still loading
-        onClick={handlePayment}
+        disabled={submitting || notReady}
+        onClick={() => handlePayment()}
       >
         {submitting ? <Spinner /> : "Checkout"}
       </Button>
@@ -90,4 +119,3 @@ export const RazorpayPaymentButton = ({
     </>
   )
 }
-

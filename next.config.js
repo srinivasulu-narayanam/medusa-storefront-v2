@@ -15,6 +15,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "e-commerce-bucket.camped.academy",
+      },
+      {
+        protocol: "https",
         hostname: "e-commerce-v2.camped.academy",
       },
       {
