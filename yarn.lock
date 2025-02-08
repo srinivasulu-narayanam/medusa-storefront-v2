@@ -616,17 +616,24 @@
     fetch-event-stream "^0.1.5"
     qs "^6.12.1"
 
-"@medusajs/types@^2.2.0", "@medusajs/types@latest":
+"@medusajs/types@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@medusajs/types/-/types-2.2.0.tgz#a31bbb66ea46a42eabcafc5174414fede05b4c6d"
+  integrity sha512-xMgd05x7MlyB++KzeVjf5zKqm3W1d/Eu46EWKocbkHaN5KpeL4pTb5k39uOeazzNizUC5kLxK1emwOw1vlegoQ==
+  dependencies:
+    bignumber.js "^9.1.2"
+
+"@medusajs/types@^2.2.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@medusajs/types/-/types-2.4.0.tgz#3b2018992f594f3e91092a14eaa62914394f2652"
   integrity sha512-G3KriSPhzg1NmD0p+CwBPwlsY68hQD7IModsL52iJHDo1DTuXT4fXA8cZzvk3a6pkbhfznaksD5sklNrwNknvw==
   dependencies:
     bignumber.js "^9.1.2"
 
-"@medusajs/ui-preset@latest":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@medusajs/ui-preset/-/ui-preset-2.4.0.tgz#e590f87724e36747ae711a3671dc2fd6ccd28844"
-  integrity sha512-eUy2kTJZyLN5k8jFZb+0BCPw7MbOySdsgmiV71z5q5rKPkYuH0F6iMC9dFWz4DS4U2HPyrowF0j2N5nQ+CBTDA==
+"@medusajs/ui-preset@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@medusajs/ui-preset/-/ui-preset-2.2.0.tgz#4afc3e976ec5d58fa2a2e4304e3621e3f6e2f452"
+  integrity sha512-h5vYf1WPUqSOfD+kiFv7jBFhCUtxIZV5cHLAIDSVxTEkOYqFZVjXLy3nXFGMwo6WNcs/u5iLN6vTUW2Lxt5ndA==
   dependencies:
     "@tailwindcss/forms" "^0.5.3"
     tailwindcss-animate "^1.0.6"

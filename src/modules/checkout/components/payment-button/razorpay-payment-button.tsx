@@ -22,6 +22,8 @@ export const RazorpayPaymentButton = ({
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
   const {Razorpay} = useRazorpay();
 
+
+  console.log({session})
   // const [orderData,setOrderData] = useState({id:""})
 
   const orderData = session.data as Record<string, string>

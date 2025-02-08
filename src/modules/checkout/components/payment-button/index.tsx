@@ -56,6 +56,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
             cart={cart}
           />
         )
+
     case isManual(paymentSession?.provider_id):
       return (
         <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />

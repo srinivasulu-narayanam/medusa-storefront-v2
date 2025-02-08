@@ -83,18 +83,22 @@ const Payment = ({
   }
 
   const handleSubmit = async () => {
+    console.log("i am here", {cart})
     setIsLoading(true)
     try {
       const shouldInputCard =
         isStripeFunc(selectedPaymentMethod) && !activeSession
+        console.log({activeSession})
 
       if (!activeSession) {
-        await initiatePaymentSession(cart, {
+        const session = await initiatePaymentSession(cart, {
           provider_id: selectedPaymentMethod,
           context:{
-            extra:cart
+            extra: cart
           }
+          
         })
+        console.log({session})
       }
 
       if (!shouldInputCard) {
@@ -282,3 +286,6 @@ const Payment = ({
 }
 
 export default Payment
+
+
+// npx create-medusa-app@latest razorpay —db-url “postgres://medusa:@Muba786@medusa-ecommerce.postgres.database.azure.com:5432/poornayush?sslmode=require”
